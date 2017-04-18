@@ -93,24 +93,21 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     var err error
     fmt.Println("running write()")
 
-    if len(args) != 5 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 5")
+    if len(args) != 4 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 4")
     }
                 
-    var shipmentIdValue = args[0]
-	err = stub.PutState("name", []byte(nameValue))  //write the variable into the chaincode state
+    var projectName = args[0]
+	err = stub.PutState("name", []byte(projectName))  //write the variable into the chaincode state
 	                
-    var shipmentValueValue = args[1]
-	err = stub.PutState("rewards", []byte(rewardsValue))  //write the variable into the chaincode state
+    var projectRewards = args[1]
+	err = stub.PutState("rewards", []byte(projectRewards))  //write the variable into the chaincode state
 	                
-    var latitudeValue = args[2]
-	err = stub.PutState("duration", []byte(durationValue))  //write the variable into the chaincode state
+    var projectDuration = args[2]
+	err = stub.PutState("duration", []byte(projectDuration))  //write the variable into the chaincode state
 	                 
-    var longitudeValue = args[3]
-	err = stub.PutState("target", []byte(targetValue))  //write the variable into the chaincode state
-	
-    var alertValue = args[4]
-	err = stub.PutState("alert", []byte(alertValue))  //write the variable into the chaincode state
+    var projectTarget = args[3]
+	err = stub.PutState("target", []byte(projectTarget))  //write the variable into the chaincode state
 	
     if err != nil {
         return nil, err
