@@ -43,10 +43,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
         return nil, errors.New("Incorrect number of arguments. Expecting 4")
     }
 
-	err := stub.PutState("shipmentId", []byte(args[0]))
-    err1 := stub.PutState("value", []byte(args[1]))
-	err2 := stub.PutState("latitude", []byte(args[2]))
-	err3 := stub.PutState("longitude", []byte(args[3]))
+	err := stub.PutState("projectName", []byte(args[0]))
+    err1 := stub.PutState("projectRewards", []byte(args[1]))
+	err2 := stub.PutState("projectDuration", []byte(args[2]))
+	err3 := stub.PutState("projectTarget", []byte(args[3]))
     if err != nil {
         return nil, err
     }
