@@ -39,36 +39,99 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4")
 	}
-
-	return nil, nil
+	   
+		err := stub.PutState("projectName", []byte(args[0]))
+	err1 := stub.PutState("projectRewards", []byte(args[1])
+		err2 := stub.PutState("projectDuration", []byte(args[2]))	
+		err3 := stub.PutState("projectTarget", []byte(args[3]))
+	if err != nil {
+        	return nil, err
+    	}
+	if err1 != nil {
+        	return nil, err1
+    	}
+	if err2 != nil {
+        	return nil, err2
+    	}
+	if err3 != nil {
+        	return nil, err3
+    }
+		      
+     return nil, nil
 }
 
 // Invoke is our entry point to invoke a chaincode function
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("invoke is running " + function)
+    fmt.Println("invoke is running " + function)
 
-	// Handle different functions
-	if function == "init" {													//initialize the chaincode state, used as reset
-		return t.Init(stub, "init", args)
-	}
-	fmt.Println("invoke did not find func: " + function)					//error
+    // Handle different functions
+    if function == "init" {
+        return t.Init(stub, "init", args)
+    } else if function == "write" {
+        return t.write(stub, args)
+    }
+    fmt.Println("invoke did not find func: " + function)
 
-	return nil, errors.New("Received unknown function invocation: " + function)
+    return nil, errors.New("Received unknown function invocation: " + function)
 }
 
 // Query is our entry point for queries
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
+    fmt.Println("query is running " + function)
 
-	// Handle different functions
-	if function == "dummy_query" {											//read a variable
-		fmt.Println("hi there " + function)						//error
-		return nil, nil;
-	}
-	fmt.Println("query did not find func: " + function)						//error
+    // Handle different functions
+    if function == "read" {                            //read a variable
+        return t.read(stub, args)
+    }
+    fmt.Println("query did not find func: " + function)
 
-	return nil, errors.New("Received unknown function query: " + function)
+    return nil, errors.New("Received unknown function query: " + function)
+}
+
+			      func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 4 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 4")
+    }
+                
+    var shipmentIdValue = args[0]
+	err = stub.PutState("projectName", []byte(projectName))  //write the variable into the chaincode state
+	                
+    var shipmentValueValue = args[1]
+	err = stub.PutState("projectRewards", []byte(projectRewards))  //write the variable into the chaincode state
+	                
+    var latitudeValue = args[2]
+	err = stub.PutState("projectDuration", []byte(projectDuration))  //write the variable into the chaincode state
+	                 
+    var longitudeValue = args[3]
+	err = stub.PutState("projetTarget", []byte(projectTarget))  //write the variable into the chaincode state
+	
+    if err != nil {
+        return nil, err
+    }
+    return nil, nil
+}
+
+func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err error
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    key = args[0]
+    valAsbytes, err := stub.GetState(key)
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+
+    return valAsbytes, nil
 }
