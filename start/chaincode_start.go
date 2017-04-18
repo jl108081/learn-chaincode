@@ -39,28 +39,28 @@ func main() {
 
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4")
-	}
-	   
-		err := stub.PutState("projectName", []byte(args[0]))
-	err1 := stub.PutState("projectRewards", []byte(args[1])
-		err2 := stub.PutState("projectDuration", []byte(args[2]))	
-		err3 := stub.PutState("projectTarget", []byte(args[3]))
-	if err != nil {
-        	return nil, err
-    	}
-	if err1 != nil {
-        	return nil, err1
-    	}
-	if err2 != nil {
-        	return nil, err2
-    	}
-	if err3 != nil {
-        	return nil, err3
+    if len(args) != 4 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 4")
     }
-		      
-     return nil, nil
+
+	err := stub.PutState("shipmentId", []byte(args[0]))
+    err1 := stub.PutState("value", []byte(args[1]))
+	err2 := stub.PutState("latitude", []byte(args[2]))
+	err3 := stub.PutState("longitude", []byte(args[3]))
+    if err != nil {
+        return nil, err
+    }
+	if err1 != nil {
+        return nil, err1
+    }
+	if err2 != nil {
+        return nil, err2
+    }
+	if err3 != nil {
+        return nil, err3
+    }
+
+    return nil, nil
 }
 
 // Invoke is our entry point to invoke a chaincode function
@@ -91,7 +91,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
     return nil, errors.New("Received unknown function query: " + function)
 }
 
-			      func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     
     var err error
     fmt.Println("running write()")
