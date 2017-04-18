@@ -43,10 +43,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
         return nil, errors.New("Incorrect number of arguments. Expecting 4")
     }
 
-	err := stub.PutState("projectName", []byte(args[0]))
-    err1 := stub.PutState("projectRewards", []byte(args[1]))
-	err2 := stub.PutState("projectDuration", []byte(args[2]))
-	err3 := stub.PutState("projectTarget", []byte(args[3]))
+	err := stub.PutState("name", []byte(args[0]))
+    err1 := stub.PutState("rewards", []byte(args[1]))
+	err2 := stub.PutState("duration", []byte(args[2]))
+	err3 := stub.PutState("target", []byte(args[3]))
     if err != nil {
         return nil, err
     }
@@ -101,16 +101,16 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     }
                 
     var shipmentIdValue = args[0]
-	err = stub.PutState("projectName", []byte(projectName))  //write the variable into the chaincode state
+	err = stub.PutState("name", []byte(projectName))  //write the variable into the chaincode state
 	                
     var shipmentValueValue = args[1]
-	err = stub.PutState("projectRewards", []byte(projectRewards))  //write the variable into the chaincode state
+	err = stub.PutState("rewards", []byte(projectRewards))  //write the variable into the chaincode state
 	                
     var latitudeValue = args[2]
-	err = stub.PutState("projectDuration", []byte(projectDuration))  //write the variable into the chaincode state
+	err = stub.PutState("duration", []byte(projectDuration))  //write the variable into the chaincode state
 	                 
     var longitudeValue = args[3]
-	err = stub.PutState("projetTarget", []byte(projectTarget))  //write the variable into the chaincode state
+	err = stub.PutState("target", []byte(projectTarget))  //write the variable into the chaincode state
 	
     if err != nil {
         return nil, err
