@@ -42,11 +42,19 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	err := stub.PutState("name", []byte(args[0]))
 	err1 := stub.PutState("reward", []byte(args[1]))
+	err2 := stub.PutState("duration", []byte(args[2]))
+	err3 := stub.PutState("target", []byte(args[3]))
 	if err != nil {
 		return nil, err
 	}
 	if err1 != nil {
 		return nil, err1
+	}
+	if err2 != nil {
+		return nil, err2
+	}
+	if err3 != nil {
+		return nil, err3
 	}
 
 	return nil, nil
@@ -82,7 +90,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 // write - invoke function to write key/value pair
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var projectName, projectReward string
+	var projectName, projectReward, projectDuration, projectTarget string
 	var err error
 	fmt.Println("running write()")
 
@@ -92,8 +100,12 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
 	projectName = args[0] //rename for funsies
 	projectReward = args[1]
+	projectDuration = args[2]
+	projectTarget = args[3]
 	err = stub.PutState("name", []byte(projectName)) //write the variable into the chaincode state
 	err = stub.PutState("rewards", []byte(projectReward)) //write the variable into the chaincode state
+	err = stub.PutState("duration", []byte(projectDuration))
+	err = stub.PutState("target", []byte(projectTarget))
 	if err != nil {
 		return nil, err
 	}
@@ -118,3 +130,23 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 
 	return valAsbytes, nil
 }
+func (t *SimpleChaincode) read2(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, key2, jsonResp string
+	var err error
+
+	if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+	}
+
+	key = args[0]
+	key2 = args[1]
+	valAsbytes, err := stub.GetState(key)
+	valAsbytes, err := stub.GetState(key2)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+
+	return valAsbytes, nil
+}
+
