@@ -42,7 +42,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	err := stub.PutState("name", []byte(args[0]))
 	err1 := stub.PutState("reward", []byte(args[1]))
-	err2 := stub.PutState("duration", []byte(args[2]))
+	err2 := stub.PutState("funds", []byte(args[2]))
 	err3 := stub.PutState("target", []byte(args[3]))
 	if err != nil {
 		return nil, err
@@ -100,11 +100,11 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
 	projectName = args[0] //rename for funsies
 	projectReward = args[1]
-	projectDuration = args[2]
+	projectFunds = args[2]
 	projectTarget = args[3]
 	err = stub.PutState("name", []byte(projectName)) //write the variable into the chaincode state
 	err = stub.PutState("rewards", []byte(projectReward)) //write the variable into the chaincode state
-	err = stub.PutState("duration", []byte(projectDuration))
+	err = stub.PutState("funds", []byte(projectFunds))
 	err = stub.PutState("target", []byte(projectTarget))
 	if err != nil {
 		return nil, err
