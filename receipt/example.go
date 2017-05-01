@@ -33,10 +33,10 @@ type User struct {
 }
 
 type Project struct {
-projectName   string  `json:"name"`
-projectReward string  `json:"reward"`
-projectFunds  int     `json:"funds"`
-projectTarget int     `json:"target"`
+	projectName   string  `json:"name"`
+	projectReward string  `json:"reward"`
+	projectFunds  int     `json:"funds"`
+	projectTarget int     `json:"target"`
 }
 
 func main() {
