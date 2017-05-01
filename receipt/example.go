@@ -33,10 +33,10 @@ type User struct {
 }
 
 type Project struct {
-	projectName   string  `json:"name"`
-	projectReward string  `json:"reward"`
-	projectFunds  int     `json:"funds"`
-	projectTarget int     `json:"target"`
+	ProjectName   string  `json:"name"`
+	ProjectReward string  `json:"reward"`
+	ProjectFunds  int     `json:"funds"`
+	ProjectTarget int     `json:"target"`
 }
 
 func main() {
@@ -113,8 +113,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	var projectsArray []string
 
 	var projectone Project
-	projectone.projectName    = args[6]
-	projectone.projectReward  = args[7]
+	projectone.ProjectName    = args[6]
+	projectone.ProjectReward  = args[7]
 	funds, err := strconv.Atoi(args[8])
 	if err != nil {
 	  return nil, errors.New("Expecting integer value for the projectFunds at place 9")
@@ -124,8 +124,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	  return nil, errors.New("Expecting integer value for the projectTarget at place 10")
 	}
 
-	projectone.projectFunds = funds
-	projectone.projectTarget = target
+	projectone.ProjectFunds = funds
+	projectone.ProjectTarget = target
 
 	p, err := json.Marshal(projectone)
 	if err != nil{
@@ -306,8 +306,8 @@ if err != nil {
 }
 
 var projectone Project
-projectone.projectName    = args[0]
-projectone.projectReward  = args[1]
+projectone.ProjectName    = args[0]
+projectone.ProjectReward  = args[1]
 funds, err := strconv.Atoi(args[2])
 if err != nil {
   return nil, errors.New("Expecting integer value for the projectFunds at place 3")
@@ -317,8 +317,8 @@ if err != nil {
   return nil, errors.New("Expecting integer value for the projectTarget at place 4")
 }
 
-projectone.projectFunds = funds
-projectone.projectTarget = target
+projectone.ProjectFunds = funds
+projectone.ProjectTarget = target
 
 p, err = json.Marshal(projectone)
 if err != nil {
