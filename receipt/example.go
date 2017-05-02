@@ -344,6 +344,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Transaction(stub, args)
 	} else if function == "create_user" {
 		return t.CreateUser(stub, args)
+	} else if function == "create_project" {
+		return t.CreateProject(stub, args)
 	}
 
 	return nil, nil
@@ -358,6 +360,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.read(stub, args)
 	} else if function == "list_users" {
 		return t.listUsers(stub, args)
+	} else if function == "list_projects" {
+		return t.listProjects(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)
 
@@ -414,3 +418,15 @@ func (t *SimpleChaincode) listUsers(stub shim.ChaincodeStubInterface, args []str
 
 	return valAsbytes, nil
 }
+func (t *SimpleChaincode) listProjects(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp string
+	var err error
+						
+	valAsbytes, err := stub.GetState("projects")
+	if err != nil {
+	jsonResp = "{\"Error\":\"Failed to get state for projects}"
+	return nil, errors.New(jsonResp)
+	}
+		
+	return valAsbytes, nil
+	}
