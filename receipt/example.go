@@ -163,7 +163,6 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	// Get the state from the ledger
-	// TODO: will be nice to have a GetAllState call to ledger
 	Avalbytes, err := stub.GetState(args[0])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
@@ -276,8 +275,68 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 
 	return nil, nil
 }
+func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4. name, reward, funds and target to create project")
+	}
+	
+	projectsArray, err := stub.GetState("projects")
+	if err != nil {
+		return nil, err
+	}
+	
+	var projects []string
+	
+	err = json.Unmarshal (projectsArray, &projects)
+	
+	if err != nil {
+		return nil, err
+	}
+	
+	projects = append(projects, args[0])
+	
+	b, err := json.Marshal(projects)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for projects")
+	}
+	
+	err = stub.PutState("projects", b)
+	if err != nil {
+		return nil, err
+	}
+	
+	var projectone Project
+	projectone.Name = args[0]
+	projectone.Reward = args[1]
+	funds, err := strconv.Atoi(args[2])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for the projectFunds at place 3")
+	}
+	target, err := strconv.Atoi(args[3])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for the projectTarget at place 4")
+	}
+	
+	projectone.Funds = funds
+	projectone.Target = target
+	
+	b, err = json.Marshal(projectone)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for projectone")
+	}
+	
+	err = stub.PutState(args[0], b)
+	if err != nil {
+		return nil, err
+	}
+	
+	return nil, nil
+}
 
-// Invoke isur entry point to invoke a chaincode function
+// Invoke is your entry point to invoke a chaincode function
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
 
