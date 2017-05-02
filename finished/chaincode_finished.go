@@ -56,14 +56,14 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err3 != nil {
 		return nil, err3
 	}
-	
+
 	return nil, nil
 }
 
 // Invoke isur entry point to invoke a chaincode function
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
-	
+
 	// Handle different functions
 	if function == "init" {
 		return t.Init(stub, "init", args)
@@ -71,7 +71,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.write(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)
-	
+
 	return nil, errors.New("Received unknown function invocation: " + function)
 }
 
@@ -82,7 +82,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
-	} 
+	}
 	fmt.Println("query did not find func: " + function)
 
 	return nil, errors.New("Received unknown function query: " + function)
@@ -99,13 +99,13 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	projectName = args[0] //rename for funsies
--	projectReward = args[1]
--	projectFunds = args[2]
--	projectTarget = args[3]
--	err = stub.PutState("name", []byte(projectName)) //write the variable into the chaincode state
--	err = stub.PutState("rewards", []byte(projectReward)) //write the variable into the chaincode state
--	err = stub.PutState("funds", []byte(projectFunds))
--	err = stub.PutState("target", []byte(projectTarget))
+	projectReward = args[1]
+	projectFunds = args[2]
+	projectTarget = args[3]
+	err = stub.PutState("name", []byte(projectName)) //write the variable into the chaincode state
+	err = stub.PutState("rewards", []byte(projectReward)) //write the variable into the chaincode state
+	err = stub.PutState("funds", []byte(projectFunds))
+	err = stub.PutState("target", []byte(projectTarget))
 	if err != nil {
 		return nil, err
 	}
