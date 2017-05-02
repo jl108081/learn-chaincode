@@ -33,10 +33,10 @@ type User struct {
 }
 
 type Project struct {
-	ProjectName   string  `json:"name"`
-	ProjectReward string  `json:"reward"`
-	ProjectFunds  int     `json:"funds"`
-	ProjectTarget int     `json:"target"`
+	Name   string  `json:"name"`
+	Reward string  `json:"reward"`
+	Funds  int     `json:"funds"`
+	Target int     `json:"target"`
 }
 
 func main() {
@@ -54,6 +54,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	}
 
 	var usersArray []string
+	var projectsArray []string
 
 	var userone User
 	userone.Name = args[0]
@@ -62,7 +63,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, errors.New("Expecting integer value for asset holding at 3 place")
 	}
-
+	
 	userone.Balance = balance
 
 	b, err := json.Marshal(userone)
@@ -109,49 +110,49 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, err
 	}
-
-	var projectsArray []string
-
+	
 	var projectone Project
-	projectone.ProjectName    = args[6]
-	projectone.ProjectReward  = args[7]
+	
+	projectone.Name = args[6]
+	projectone.Reward = args[7]
 	funds, err := strconv.Atoi(args[8])
 	if err != nil {
-	  return nil, errors.New("Expecting integer value for the projectFunds at place 9")
+		return nil, errors.New("Expecting integer value for the projectFunds at place 9")
 	}
 	target, err := strconv.Atoi(args[9])
 	if err != nil {
-	  return nil, errors.New("Expecting integer value for the projectTarget at place 10")
+		return nil, errors.New("Expecting integer value for the projectTarget at place 10")
 	}
-
-	projectone.ProjectFunds = funds
-	projectone.ProjectTarget = target
-
-	p, err := json.Marshal(projectone)
+	
+	projectone.Funds = funds
+	projectone.Target = target
+	
+	b, err = json.Marshal(projectone)
 	if err != nil{
-	  fmt.Println(err)
-	  return nil, errors.New("Errors while creating json string for projectone")
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for projectone")
 	}
-
-	err = stub.PutState(args[6], p)
+	
+	err = stub.PutState(args[6], b)
 	if err != nil {
 		return nil, err
 	}
-
+	
 	projectsArray = append(projectsArray, args[6])
-
-	p, err = json.Marshal(projectsArray)
+	
+	b, err = json.Marshal(projectsArray)
 	if err != nil {
-	  fmt.Println(err)
-	  return nil, errors.New("Errors while creating json string for projectsarray")
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for projectsarray")
 	}
-
-	err = stub.PutState("projects", p)
+	
+	err = stub.PutState("projects", b)
 	if err != nil {
-	  return nil, err
+		return nil, err
 	}
-return nil, nil
+	return nil, nil
 }
+
 func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	var X int // Transaction value
@@ -162,6 +163,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	// Get the state from the ledger
+	// TODO: will be nice to have a GetAllState call to ledger
 	Avalbytes, err := stub.GetState(args[0])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
@@ -233,6 +235,7 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	var users []string
 
 	err = json.Unmarshal(usersArray, &users)
+
 	if err != nil {
 		return nil, err
 	}
@@ -274,88 +277,6 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	return nil, nil
 }
 
-func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4. name, reward, funds and target to create project")
-	}
-
-projectsArray, err := stub.GetState("projects")
-if err != nil {
-  return nil, err
-}
-
-var projects []string
-
-err = json.Unmarshal (projectsArray, &projects)
-if err != nil {
-  return nil, err
-}
-
-projects = append(projects, args[0])
-
-p, err := json.Marshal(projects)
-if err != nil {
-  fmt.Println(err)
-  return nil, errors.New("Errors while creating json string for projects")
-}
-
-err = stub.PutState("projects", p)
-if err != nil {
-  return nil, err
-}
-
-var projectone Project
-projectone.ProjectName    = args[0]
-projectone.ProjectReward  = args[1]
-funds, err := strconv.Atoi(args[2])
-if err != nil {
-  return nil, errors.New("Expecting integer value for the projectFunds at place 3")
-}
-target, err := strconv.Atoi(args[3])
-if err != nil {
-  return nil, errors.New("Expecting integer value for the projectTarget at place 4")
-}
-
-projectone.ProjectFunds = funds
-projectone.ProjectTarget = target
-
-p, err = json.Marshal(projectone)
-if err != nil {
-  fmt.Println(err)
-  return nil, errors.New("Errors while creating json string for projectone")
-}
-
-err = stub.PutState(args[0], p)
-if err != nil {
-  return nil, err
-}
-
-return nil, nil
-}
-
-func (t *SimpleChaincode) EditProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var projectName, projectReward, projectFunds, projectTarget string
-	var err error
-	fmt.Println("running write()")
-
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4 name of the key and value to set")
-	}
-
-	projectName = args[0] //rename for funsies
-	projectReward = args[1]
-	projectFunds = args[2]
-	projectTarget = args[3]
-	err = stub.PutState("name", []byte(projectName)) //write the variable into the chaincode state
-	err = stub.PutState("rewards", []byte(projectReward)) //write the variable into the chaincode state
-	err = stub.PutState("funds", []byte(projectFunds))
-	err = stub.PutState("target", []byte(projectTarget))
-	if err != nil {
-		return nil, err
-	}
-	return nil, nil
-}
 // Invoke isur entry point to invoke a chaincode function
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
@@ -363,11 +284,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	if function == "transaction" {
 		return t.Transaction(stub, args)
 	} else if function == "create_user" {
-		return t.CreateProject(stub, args)
-	} else if function == "create_project" {
 		return t.CreateUser(stub, args)
-		} else if function == "edit_project" {
-		return t.EditProject(stub, args)
 	}
 
 	return nil, nil
@@ -382,8 +299,6 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.read(stub, args)
 	} else if function == "list_users" {
 		return t.listUsers(stub, args)
-	} else if function == "list_projects" {
-		return t.listProjects(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)
 
@@ -435,19 +350,6 @@ func (t *SimpleChaincode) listUsers(stub shim.ChaincodeStubInterface, args []str
 	valAsbytes, err := stub.GetState("users")
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for users}"
-		return nil, errors.New(jsonResp)
-	}
-
-	return valAsbytes, nil
-}
-
-func (t *SimpleChaincode) listProjects(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp string
-	var err error
-
-	valAsbytes, err := stub.GetState("projects")
-	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for projects}"
 		return nil, errors.New(jsonResp)
 	}
 
