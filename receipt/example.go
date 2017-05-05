@@ -315,8 +315,6 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		if err != nil {
 			return nil, err
 		}
-
-		return nil, nil
 	}
 	b, err := json.Marshal(projectX)
 	if err != nil {
