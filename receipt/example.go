@@ -345,6 +345,48 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	return nil, nil
 }
 
+func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. Name of the investor, and the amount")
+	}
+
+	var X int // charge amount
+	var err error
+	// get the state from the user from the ledger
+	userState, err := stub.GetState(args[0])
+	if err != nil {
+		return nil, errors.New("Failed to get user state")
+	}
+
+	var userX User
+	err = json.Unmarshal(userState, &userX)
+	if err != nil {
+		return nil, errors.New("Failed to marshal string from user struct")
+	}
+	// perform the execution
+	X, err = strconv.Atoi(args[1])
+	if err !=  nil {
+		return nil, errors.New("second argument must be a integer")
+	}
+
+	userX.Balance = userX.Balance + X
+	fmt.Printf("new user balance is %d", userX.Balance)
+
+	b, err := json.Marshal(userX)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userX")
+	}
+	// write back to the ledger
+	err = stub.PutState(userX.Name, b)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	if len(args) != 3 {
@@ -475,6 +517,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.CreateProject(stub, args)
 	} else if function == "investment" {
 		return t.InvestProject(stub, args)
+	} else if function == "recharge" {
+		return t.RechargeBalance(stub, args)
 	}
 	return nil, nil
 }
