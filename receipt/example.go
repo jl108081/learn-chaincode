@@ -423,7 +423,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.CreateProject(stub, args)
 	} else if function == "investment" {
 		return t.InvestProject(stub, args)
-
+	}
 	return nil, nil
 }
 
