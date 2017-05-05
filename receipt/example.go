@@ -373,6 +373,11 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 	userX.Balance = userX.Balance + X
 	fmt.Printf("new user balance is %d", userX.Balance)
 
+	if userX.Balance < 0 {
+	userX.Balance = userX.Balance - X
+		return nil, errors.New("The balance of the user cant be negative")
+	}
+
 	b, err := json.Marshal(userX)
 	if err != nil {
 		fmt.Println(err)
