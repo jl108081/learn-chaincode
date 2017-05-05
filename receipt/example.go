@@ -194,7 +194,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	userB.Balance = userB.Balance + X
 	fmt.Printf("Aval = %d, Bval = %d\n", userA.Balance, userB.Balance)
 	// valdidation
-	if userX.Balance < 0 {
+	if userA.Balance < 0 {
 		userA.Balance = userA.Balance + X
 		userB.Balance = userB.Balance - X
 		return nil, errors.New("unsufficient balance please fund your account")
