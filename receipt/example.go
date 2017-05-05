@@ -193,7 +193,13 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	userA.Balance = userA.Balance - X
 	userB.Balance = userB.Balance + X
 	fmt.Printf("Aval = %d, Bval = %d\n", userA.Balance, userB.Balance)
-
+	// valdidation
+	if userX.Balance < 0 {
+		userA.Balance = userA.Balance + X
+		userB.Balance = userB.Balance - X
+		return nil, errors.New("unsufficient balance please fund your account")
+	}
+	
 	b, err := json.Marshal(userA)
 	if err != nil {
 		fmt.Println(err)
@@ -269,7 +275,49 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		return nil, errors.New("unsufficient balance please fund your account")
 	}
 	
-	
+	// self execution
+	if projectX.Funds >= projectX.Target {
+		creatorState, err := stub.GetState(projectX.Creator)
+		if err != nil {
+			return nil, errors.New("Failed to get creatorstate")
+		}
+		var creatorX User
+
+		err = json.Unmarshal(creatorState, &creatorX)
+		if err != nil {
+			return nil, errors.New("Failed to marshal string to struct of creator")
+		}
+		// transfer all the funds to the creator from the project
+		X = projectX.Funds
+		projectX.Funds = projectX.Funds - X
+		creatorX.Balance = creatorX.Balance + X
+		projectX.Stat = true
+		fmt.Println("The project has been succesfully funded the funds have been transferred to the Creator of the project")
+		// write everything back to the ledger
+		b, err := json.Marshal(creatorX)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("Errors while creating json string for creatorX")
+		}
+
+		err = stub.PutState(creatorX.Name, b)
+		if err != nil {
+			return nil, err
+		}
+
+		b, err = json.Marshal(projectX)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("Errors while creating json string for projectX")
+		}
+
+		err = stub.PutState(projectX.Name, b)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, nil
+	}
 	b, err := json.Marshal(projectX)
 	if err != nil {
 		fmt.Println(err)
