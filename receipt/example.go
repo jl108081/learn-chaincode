@@ -33,10 +33,12 @@ type User struct {
 }
 
 type Project struct {
-	Name   string  `json:"name"`
-	Reward string  `json:"reward"`
-	Funds  int     `json:"funds"`
-	Target int     `json:"target"`
+	Name   	string  `json:"name"`
+	Reward 	string  `json:"reward"`
+	Funds  	int     `json:"funds"`
+	Target 	int     `json:"target"`
+	Stat	bool	`json:"stat"`
+	Creator string 	`json:"creator"`
 }
 
 func main() {
@@ -123,6 +125,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectTarget at place 10")
 	}
+	projectone.Stat = false
+	projectone.Creator = (args[0])
 	
 	projectone.Funds = funds
 	projectone.Target = target
@@ -398,8 +402,8 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 }
 func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
-	if len(args) != 4 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 4. name, reward, funds and target to create project")
+	if len(args) != 5 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 5. name, reward, funds, target and creator to create project")
 	}
 	
 	projectsArray, err := stub.GetState("projects")
@@ -439,6 +443,8 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectTarget at place 4")
 	}
+	projectone.Stat = false
+	projectone.Creator = (args[4])
 	
 	projectone.Funds = funds
 	projectone.Target = target
