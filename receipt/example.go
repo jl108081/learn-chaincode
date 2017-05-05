@@ -219,6 +219,81 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 
 	return nil, nil
 }
+func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	
+	if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3. Name of the project, name of the investor and the amount")
+	}
+	
+	var X int // investment value
+	var err error
+	
+	// get the state from the ledger
+	
+	projectState, err := stub.GetState(args[0])
+	if err != nil {
+		return nil, errors.New("Failed to get state")
+	}
+	
+	var projectX Project
+	
+	err = json.Unmarshal(projectState, &projectX)
+	if err != nil {
+		return nil, errors.New("Failed to marshal string to struct of projectX")
+	}
+	
+	userState, err := stub.GetState(args[1])
+	if err != nil {
+		return nil, errors.New("Failed to get state")
+	}
+	
+	var userX User
+	
+	err = json.Unmarshal(userState, &userX)
+	if err != nil {
+		return nil, errors.New("Failed to marshal string to struct of userX")
+	}
+	
+	X, err = strconv.Atoi(args[2])
+	if err != nil {
+		return nil, errors.New("Third argument must be a integer")
+	}
+	
+	userX.Balance = userX.Balance - X
+	projectX.Funds = projectX.Funds + X
+	fmt.Printf("Funds for project %d is %d and the %d balance is %d", projectX.Name, projectX.Funds, userX.Name, userX.Balance)
+	
+	if userX.Balance < 0 {
+		userX.Balance = userX.Balance + X
+		projectX.Funds = projectX.Funds - X
+		return nil, errors.New("unsufficient balance please fund your account")
+	}
+	
+	
+	b, err := json.Marshal(projectX)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for projectX")
+	}
+	
+	err = stub.PutState(projectX.Name, b)
+	if err != nil {
+		return nil, err
+	}
+	
+	b, err = json.Marshal(userX)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userX")
+	}
+	
+	err = stub.PutState(userX.Name, b)
+	if err != nil {
+		return nil, err
+	}
+	
+	return nil, nil
+}
 
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
@@ -346,7 +421,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.CreateUser(stub, args)
 	} else if function == "create_project" {
 		return t.CreateProject(stub, args)
-	}
+	} else if function == "investment" {
+		return t.InvestProject(stub, args)
 
 	return nil, nil
 }
