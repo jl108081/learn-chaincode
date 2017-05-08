@@ -350,7 +350,7 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 	if len(args) != 3 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 3. Name of the investor, the amount and the password")
 	} // password is the sha256 hash of mendix
-	if args[2] = "1274d60ff458da72bf3e58107cc2ebcf1f542b587b94c358eb65265f85c72cf5"{
+	if args[2] == "1274d60ff458da72bf3e58107cc2ebcf1f542b587b94c358eb65265f85c72cf5"{
 		var X int // charge amount
 		var err error
 		// get the state from the user from the ledger
