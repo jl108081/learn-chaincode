@@ -347,48 +347,45 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 
 func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
-	if len(args) != 2 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 2. Name of the investor, and the amount")
-	}
+	if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3. Name of the investor, the amount and the password")
+	} // password is the sha256 hash of mendix
+	if args[2] = "1274d60ff458da72bf3e58107cc2ebcf1f542b587b94c358eb65265f85c72cf5"{
+		var X int // charge amount
+		var err error
+		// get the state from the user from the ledger
+		userState, err := stub.GetState(args[0])
+		if err != nil {
+			return nil, errors.New("Failed to get user state")
+		}
 
-	var X int // charge amount
-	var err error
-	// get the state from the user from the ledger
-	userState, err := stub.GetState(args[0])
-	if err != nil {
-		return nil, errors.New("Failed to get user state")
-	}
+		var userX User
+		err = json.Unmarshal(userState, &userX)
+		if err != nil {
+			return nil, errors.New("Failed to marshal string from user struct")
+		}
+		// perform the execution
+		X, err = strconv.Atoi(args[1])
+		if err !=  nil {
+			return nil, errors.New("second argument must be a integer")
+		}
 
-	var userX User
-	err = json.Unmarshal(userState, &userX)
-	if err != nil {
-		return nil, errors.New("Failed to marshal string from user struct")
-	}
-	// perform the execution
-	X, err = strconv.Atoi(args[1])
-	if err !=  nil {
-		return nil, errors.New("second argument must be a integer")
-	}
+		userX.Balance = userX.Balance + X
+		fmt.Printf("new user balance is %d", userX.Balance)
 
-	userX.Balance = userX.Balance + X
-	fmt.Printf("new user balance is %d", userX.Balance)
-
-	if userX.Balance < 0 {
-	userX.Balance = userX.Balance - X
-		return nil, errors.New("The balance of the user cant be negative")
+		b, err := json.Marshal(userX)
+		if err != nil {
+			fmt.Println(err)
+			return nil, errors.New("Errors while creating json string for userX")
+		}
+		// write back to the ledger
+		err = stub.PutState(userX.Name, b)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		fmt.Println("the password is incorrect: tips: 'mendix' 'bitcoin secure'")
 	}
-
-	b, err := json.Marshal(userX)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userX")
-	}
-	// write back to the ledger
-	err = stub.PutState(userX.Name, b)
-	if err != nil {
-		return nil, err
-	}
-
 	return nil, nil
 }
 
