@@ -34,6 +34,7 @@ type User struct {
 
 type Project struct {
 	Name   	string  `json:"name"`
+	Description string `json:"description"`
 	Reward 	string  `json:"reward"`
 	Funds  	int     `json:"funds"`
 	Target 	int     `json:"target"`
@@ -51,8 +52,8 @@ func main() {
 // Init resets all the things
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 
-	if len(args) != 10 {
-		return nil, errors.New("Incorrect number of arguments. Execting 10")
+	if len(args) != 11 {
+		return nil, errors.New("Incorrect number of arguments. Execting 11")
 	}
 
 	var usersArray []string
@@ -116,12 +117,13 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	var projectone Project
 	
 	projectone.Name = args[6]
-	projectone.Reward = args[7]
-	funds, err := strconv.Atoi(args[8])
+	projectone.Description = args[7]
+	projectone.Reward = args[8]
+	funds, err := strconv.Atoi(args[9])
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectFunds at place 9")
 	}
-	target, err := strconv.Atoi(args[9])
+	target, err := strconv.Atoi(args[10])
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectTarget at place 10")
 	}
@@ -296,7 +298,8 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Funds = projectX.Funds - X
 		creatorX.Balance = creatorX.Balance + X
 		projectX.Stat = true
-		fmt.Println("The project has been succesfully funded the funds have been transferred to the Creator of the project")
+		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project"
+		fmt.Println("The project has been succesfully funded. The funds have been transferred to the Creator of the project")
 		// write everything back to the ledger
 		b, err := json.Marshal(creatorX)
 		if err != nil {
@@ -446,8 +449,8 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 }
 func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	
-	if len(args) != 5 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 5. name, reward, funds, target and creator to create project")
+	if len(args) != 6 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 5. name, description, reward, funds, target and creator to create project")
 	}
 	
 	projectsArray, err := stub.GetState("projects")
@@ -478,17 +481,18 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 	
 	var projectone Project
 	projectone.Name = args[0]
-	projectone.Reward = args[1]
-	funds, err := strconv.Atoi(args[2])
+	projectone.Description = args[1]
+	projectone.Reward = args[2]
+	funds, err := strconv.Atoi(args[3])
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectFunds at place 3")
 	}
-	target, err := strconv.Atoi(args[3])
+	target, err := strconv.Atoi(args[4])
 	if err != nil {
 		return nil, errors.New("Expecting integer value for the projectTarget at place 4")
 	}
 	projectone.Stat = false
-	projectone.Creator = (args[4])
+	projectone.Creator = (args[5])
 	
 	projectone.Funds = funds
 	projectone.Target = target
