@@ -206,7 +206,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, errors.New("unsufficient balance please fund your account")
 	}
 	
-	b, err = json.Marshal(userB)
+	b, err := json.Marshal(userB)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for userb")
@@ -217,7 +217,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, err
 	}
 	
-	b, err := json.Marshal(userA)
+	b, err = json.Marshal(userA)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for usera")
@@ -334,7 +334,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 			return nil, err
 		}
 	}
-	b, err := json.Marshal(projectX)
+	b, err = json.Marshal(projectX)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for projectX")
