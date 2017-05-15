@@ -281,7 +281,8 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Funds = projectX.Funds - X
 		return nil, errors.New("unsufficient balance please fund your account")
 	}
-	b, err = json.Marshal(userX)
+	
+	b, err := json.Marshal(userX)
 	if err != nil {
 		fmt.Println(err)
 		return nil, errors.New("Errors while creating json string for userX")
@@ -311,7 +312,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project"
 		fmt.Println("The project has been succesfully funded. The funds have been transferred to the Creator of the project")
 		// write everything back to the ledger
-		b, err := json.Marshal(creatorX)
+		b, err = json.Marshal(creatorX)
 		if err != nil {
 			fmt.Println(err)
 			return nil, errors.New("Errors while creating json string for creatorX")
