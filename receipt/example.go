@@ -206,6 +206,17 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, errors.New("unsufficient balance please fund your account")
 	}
 	
+	b, err = json.Marshal(userB)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userb")
+	}
+
+	err = stub.PutState(userB.Name, b)
+	if err != nil {
+		return nil, err
+	}
+	
 	b, err := json.Marshal(userA)
 	if err != nil {
 		fmt.Println(err)
@@ -218,16 +229,6 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		return nil, err
 	}
 
-	b, err = json.Marshal(userB)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userb")
-	}
-
-	err = stub.PutState(userB.Name, b)
-	if err != nil {
-		return nil, err
-	}
 
 	return nil, nil
 }
@@ -280,7 +281,16 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Funds = projectX.Funds - X
 		return nil, errors.New("unsufficient balance please fund your account")
 	}
+	b, err = json.Marshal(userX)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("Errors while creating json string for userX")
+	}
 	
+	err = stub.PutState(userX.Name, b)
+	if err != nil {
+		return nil, err
+	}
 	// self execution
 	if projectX.Funds >= projectX.Target {
 		creatorState, err := stub.GetState(projectX.Creator)
@@ -333,18 +343,6 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-	
-	b, err = json.Marshal(userX)
-	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userX")
-	}
-	
-	err = stub.PutState(userX.Name, b)
-	if err != nil {
-		return nil, err
-	}
-	
 	return nil, nil
 }
 
