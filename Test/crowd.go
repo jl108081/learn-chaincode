@@ -576,6 +576,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 		return t.listUsers(stub, args)
 	} else if function == "list_projects" {
 		return t.listProjects(stub, args)
+	} else if function == "list_myprojects" {
+		return t.listpersonalProjects(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)
 
