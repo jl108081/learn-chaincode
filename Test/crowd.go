@@ -209,7 +209,11 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	if err != nil {
 		return nil, errors.New("Third argument must be integer")
 	}
-
+	// Exit function if the 3rd value integer is negative
+	if X <= 0 {
+		return nil, errors.New("Expecting a positive number")
+	}
+	
 	userA.Balance = userA.Balance - X
 	userB.Balance = userB.Balance + X
 	fmt.Printf("Aval = %d, Bval = %d\n", userA.Balance, userB.Balance)
@@ -268,7 +272,11 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Failed to marshal string to struct of projectX")
 	}
-
+	// exit function if the project is already founded
+	if projectX.Stat != false {
+		return nil, errors.New("project is already funded")
+	} 
+	
 	userState, err := stub.GetState(args[1])
 	if err != nil {
 		return nil, errors.New("Failed to get state")
@@ -285,7 +293,11 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, errors.New("Third argument must be a integer")
 	}
-
+	
+	// Exit function if the 3rd value integer is negative
+	if X <= 0 {
+		return nil, errors.New("Expecting a positive number")
+	}
 	userX.Balance = userX.Balance - X
 	projectX.Funds = projectX.Funds + X
 	fmt.Printf("Funds for project %d is %d and the %d balance is %d", projectX.Name, projectX.Funds, userX.Name, userX.Balance)
@@ -323,7 +335,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Funds = projectX.Funds - X
 		creatorX.Balance = creatorX.Balance + X
 		projectX.Stat = true
-		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project"
+		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project. Please dont invest into this project anymore"
 		fmt.Println("The project has been succesfully funded. The funds have been transferred to the Creator of the project")
 		// write everything back to the ledger
 		b, err = json.Marshal(creatorX)
