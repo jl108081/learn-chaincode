@@ -230,7 +230,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 		// Exit function if the 3rd value integer is negative
 	if X <= 0 {
-		stub.PutState(args[0]+"Msg",[]byte("Expecting a positive number for the third argument"))
+		stub.PutState(args[0]+"Msg",[]byte("Expecting a positive number, please first put in the transaction amount and then double click the receiver"))
 		return nil, nil
 	}
 
@@ -326,7 +326,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	}
 	// Exit function if the 3rd value integer is negative
 	if X <= 0 {
-		stub.PutState(args[1]+"Msg",[]byte("Expecting a positive number"))
+		stub.PutState(args[1]+"Msg",[]byte("Expecting a positive number, please first put in the investment amount and then double click the project"))
 		return nil, nil
 	}
 
