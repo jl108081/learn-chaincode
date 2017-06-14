@@ -520,6 +520,7 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 		return nil, nil
 	}
 
+
 	projectsArray, err := stub.GetState("projects")
 	if err != nil {
 		return nil, err
@@ -663,7 +664,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
 // read - query function to read key/value pair
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, jsonResp string
+	var key string
 	var err error
 
 	if len(args) != 1 {
@@ -674,52 +675,51 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	key = args[0]
 	valAsbytes, err := stub.GetState(key)
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-		return nil, errors.New(jsonResp)
+		stub.PutState("ErrorMsg",[]byte("{\"Error\":\"Failed to get state for " + key + "\"}"))
+		return nil, nil
 	}
 
 	return valAsbytes, nil
 }
 
 func (t *SimpleChaincode) listUsers(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp string
 	var err error
 
 	valAsbytes, err := stub.GetState("users")
 	if err != nil {
-		jsonResp = "{\"Error\":\"Failed to get state for users}"
-		return nil, errors.New(jsonResp)
+		stub.PutState("ErrorMsg",[]byte("{\"Error\":\"Failed to get state for users}"))
+		return nil, nil
 	}
 
 	return valAsbytes, nil
 }
 func (t *SimpleChaincode) listProjects(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var jsonResp string
 	var err error
 
 	valAsbytes, err := stub.GetState("projects")
 	if err != nil {
-	jsonResp = "{\"Error\":\"Failed to get state for projects}"
-	return nil, errors.New(jsonResp)
+		stub.PutState("ErrorMsg",[]byte("{\"Error\":\"Failed to get state for projects}"))
+	return nil, nil
 	}
 
 	return valAsbytes, nil
 }
 
 func (t *SimpleChaincode) listpersonalProjects(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, jsonResp string
+	var key string
 	var err error
 
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting name of the current user to query his list of projects")
+		stub.PutState("ErrorMsg",[]byte("Incorrect number of arguments. Expecting name of the current user to query his list of projects"))
+		return nil, nil
 	}
 
 	key = args[0]
 
 	valAsbytes, err := stub.GetState(key+"projects")
 	if err != nil {
-	jsonResp = "{\"Error\":\"Failed to get state for personalprojects}"
-	return nil, errors.New(jsonResp)
+		stub.PutState("ErrorMsg",[]byte("{\"Error\":\"Failed to get state for personalprojects}"))
+	return nil, nil
 	}
 
 	return valAsbytes, nil
