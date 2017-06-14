@@ -170,7 +170,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, nil
 	}
 
-	err = stub.PutState("DeployMsg",[]byte("Most recent deployment is succesful"))
+	err = stub.PutState(args[0]+"Msg",[]byte("Most recent deployment is succesful"))
 	if err != nil {
 		return nil, err
 	}
