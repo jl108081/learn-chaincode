@@ -65,15 +65,16 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	userone.Password = args[1]
 	balance, err := strconv.Atoi(args[2])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
+		return nil, nil
 	}
 
 	userone.Balance = balance
 
 	b, err := json.Marshal(userone)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userone")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for userone"))
+		return nil, nil
 	}
 
 	err = stub.PutState(args[0], b)
@@ -85,15 +86,16 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	userone.Password = args[4]
 	balance, err = strconv.Atoi(args[5])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
+		return nil, nil
 	}
 
 	userone.Balance = balance
 
 	b, err = json.Marshal(userone)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userone")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for userone"))
+		return nil, nil
 	}
 
 	err = stub.PutState(args[3], b)
@@ -106,8 +108,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	b, err = json.Marshal(usersArray)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for usertwo")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for usertwo"))
+		return nil, nil
 	}
 
 	err = stub.PutState("users", b)
@@ -122,11 +124,13 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	projectone.Reward = args[8]
 	funds, err := strconv.Atoi(args[9])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for the projectFunds at place 9")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectFunds at place 9"))
+		return nil, nil
 	}
 	target, err := strconv.Atoi(args[10])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for the projectTarget at place 10")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectTarget at place 10"))
+		return nil, nil
 	}
 	projectone.Stat = false
 	projectone.Creator = (args[0])
@@ -136,8 +140,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	b, err = json.Marshal(projectone)
 	if err != nil{
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for projectone")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for projectone"))
+		return nil, nil
 	}
 
 	err = stub.PutState(args[6], b)
@@ -150,8 +154,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	b, err = json.Marshal(personalprojectArray)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for personalprojectArray")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for personalprojectArray"))
+		return nil, nil
 	}
 	personalprojects := args[0]+"projects"
 
@@ -162,8 +166,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	b, err = json.Marshal(projectsArray)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for projectsarray")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for projectsarray"))
+		return nil, nil
 	}
 
 	err = stub.PutState("DeployMsg",[]byte("Most recent deployment is succesful"))
@@ -255,10 +259,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 
 	b, err = json.Marshal(userA)
 	if err != nil {
-		err = stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for sender"))
-		if err != nil {
-			return nil, err
-		}
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for sender"))
 		return nil, nil
 	}
 
@@ -287,55 +288,62 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 
 	projectState, err := stub.GetState(args[0])
 	if err != nil {
-		return nil, errors.New("Failed to get state")
+		stub.PutState(args[1]+"Msg",[]byte("Failed to get state"))
+		return nil, nil
 	}
 
 	var projectX Project
 
 	err = json.Unmarshal(projectState, &projectX)
 	if err != nil {
-		return nil, errors.New("Failed to marshal string to struct of projectX")
+		stub.PutState(args[1]+"Msg",[]byte("Failed to marshal string to struct of projectX"))
+		return nil, nil
 	}
 	// exit function if the project is already founded
 	if projectX.Stat != false {
-		return nil, errors.New("project is already funded")
+		stub.PutState(args[1]+"Msg",[]byte("Sorry, the project is already funded"))
+		return nil, nil
 	}
 
 	userState, err := stub.GetState(args[1])
 	if err != nil {
-		return nil, errors.New("Failed to get state")
+		stub.PutState(args[1]+"Msg",[]byte("Failed to get state"))
+		return nil, nil
 	}
 
 	var userX User
 
 	err = json.Unmarshal(userState, &userX)
 	if err != nil {
-		return nil, errors.New("Failed to marshal string to struct of userX")
+		stub.PutState(args[1]+"Msg",[]byte("Failed to marshal string to struct of userX"))
+		return nil, nil
 	}
 
 	X, err = strconv.Atoi(args[2])
 	if err != nil {
-		return nil, errors.New("Third argument must be a integer")
+		stub.PutState(args[1]+"Msg",[]byte("Third argument must be a integer"))
+		return nil, nil
 	}
 	// Exit function if the 3rd value integer is negative
 	if X <= 0 {
-		return nil, errors.New("Expecting a positive number")
+		stub.PutState(args[1]+"Msg",[]byte("Expecting a positive number"))
+		return nil, nil
 	}
 
 	userX.Balance = userX.Balance - X
 	projectX.Funds = projectX.Funds + X
-	fmt.Printf("Funds for project %d is %d and the %d balance is %d", projectX.Name, projectX.Funds, userX.Name, userX.Balance)
 
 	if userX.Balance < 0 {
 		userX.Balance = userX.Balance + X
 		projectX.Funds = projectX.Funds - X
-		return nil, errors.New("unsufficient balance please fund your account")
+		stub.PutState(args[1]+"Msg",[]byte("unsufficient balance please fund your account"))
+		return nil, nil
 	}
 
 	b, err := json.Marshal(userX)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userX")
+		stub.PutState(args[1]+"Msg",[]byte("Errors while creating json string for userX"))
+		return nil, nil
 	}
 
 	err = stub.PutState(userX.Name, b)
@@ -346,13 +354,15 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if projectX.Funds >= projectX.Target {
 		creatorState, err := stub.GetState(projectX.Creator)
 		if err != nil {
-			return nil, errors.New("Failed to get creatorstate")
+			stub.PutState(args[1]+"Msg",[]byte("Failed to get creatorstate"))
+			return nil, nil
 		}
 		var creatorX User
 
 		err = json.Unmarshal(creatorState, &creatorX)
 		if err != nil {
-			return nil, errors.New("Failed to marshal string to struct of creator")
+			stub.PutState(args[1]+"Msg",[]byte("Failed to marshal string to struct of creator"))
+			return nil, nil
 		}
 		// transfer all the funds to the creator from the project
 		X = projectX.Funds
@@ -360,12 +370,11 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		creatorX.Balance = creatorX.Balance + X
 		projectX.Stat = true
 		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project. Please dont invest into this project anymore"
-		fmt.Println("The project has been succesfully funded. The funds have been transferred to the Creator of the project")
 		// write everything back to the ledger
 		b, err = json.Marshal(creatorX)
 		if err != nil {
-			fmt.Println(err)
-			return nil, errors.New("Errors while creating json string for creatorX")
+			stub.PutState(args[1]+"Msg",[]byte("Errors while creating json string for creatorX"))
+			return nil, nil
 		}
 
 		err = stub.PutState(creatorX.Name, b)
@@ -375,8 +384,8 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 
 		b, err = json.Marshal(projectX)
 		if err != nil {
-			fmt.Println(err)
-			return nil, errors.New("Errors while creating json string for projectX")
+			stub.PutState(args[1]+"Msg",[]byte("Errors while creating json string for projectX"))
+			return nil, nil
 		}
 
 		err = stub.PutState(projectX.Name, b)
@@ -386,21 +395,23 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	}
 	b, err = json.Marshal(projectX)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for projectX")
+		stub.PutState(args[1]+"Msg",[]byte("Errors while creating json string for projectX"))
+		return nil, nil
 	}
 
 	err = stub.PutState(projectX.Name, b)
 	if err != nil {
 		return nil, err
 	}
+	stub.PutState(args[1]+"Msg",[]byte("Investment into project is succesful"))
 	return nil, nil
 }
 
 func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	if len(args) != 3 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 3. Name of the investor, the amount and the password")
+		stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 3. Name of the investor, the amount and the password"))
+		return nil, nil
 	} // password is the sha256 hash of mendix
 	if args[2] == "1274d60ff458da72bf3e58107cc2ebcf1f542b587b94c358eb65265f85c72cf5"{
 		var X int // charge amount
@@ -408,27 +419,29 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 		// get the state from the user from the ledger
 		userState, err := stub.GetState(args[0])
 		if err != nil {
-			return nil, errors.New("Failed to get user state")
+			stub.PutState(args[0]+"Msg",[]byte("Failed to get state"))
+			return nil, nil
 		}
 
 		var userX User
 		err = json.Unmarshal(userState, &userX)
 		if err != nil {
-			return nil, errors.New("Failed to marshal string from user struct")
+			stub.PutState(args[0]+"Msg",[]byte("Failed to marshal string from user struct"))
+			return nil, nil
 		}
 		// perform the execution
 		X, err = strconv.Atoi(args[1])
 		if err !=  nil {
-			return nil, errors.New("second argument must be a integer")
+			stub.PutState(args[0]+"Msg",[]byte("second argument must be a integer"))
+			return nil, nil
 		}
 
 		userX.Balance = userX.Balance + X
-		fmt.Printf("new user balance is %d", userX.Balance)
 
 		b, err := json.Marshal(userX)
 		if err != nil {
-			fmt.Println(err)
-			return nil, errors.New("Errors while creating json string for userX")
+			stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for userX"))
+			return nil, nil
 		}
 		// write back to the ledger
 		err = stub.PutState(userX.Name, b)
@@ -436,15 +449,17 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 			return nil, err
 		}
 	} else {
-		fmt.Println("the password is incorrect: tips: 'mendix' 'bitcoin secure'")
+		stub.PutState(args[0]+"Msg",[]byte("the password is incorrect: tips: 'mendix' 'bitcoin secure'"))
 	}
+	stub.PutState(args[0]+"Msg",[]byte("your account is succesfully funded"))
 	return nil, nil
 }
 
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	if len(args) != 3 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 3. name,password,balance to create user")
+		stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 3. Name,password,balance to create user"))
+		return nil, nil
 	}
 
 	usersArray, err := stub.GetState("users")
@@ -464,8 +479,8 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 
 	b, err := json.Marshal(users)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for usertwo")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for usertwo"))
+		return nil, nil
 	}
 
 	err = stub.PutState("users", b)
@@ -478,28 +493,31 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	userone.Password = args[1]
 	balance, err := strconv.Atoi(args[2])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for asset holding at 3 place")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
+		return nil, nil
 	}
 
 	userone.Balance = balance
 
 	b, err = json.Marshal(userone)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for userone")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for userone"))
+		return nil, nil
 	}
 
 	err = stub.PutState(args[0], b)
 	if err != nil {
 		return nil, err
 	}
+	stub.PutState(args[0]+"Msg",[]byte("Wallet creation is succesful"))
 
 	return nil, nil
 }
 func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	if len(args) != 6 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 6. name, description, reward, funds, target and creator to create project")
+		stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 6. name, description, reward, funds, target and creator to create project"))
+		return nil, nil
 	}
 
 	projectsArray, err := stub.GetState("projects")
@@ -532,8 +550,8 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 
 	b, err := json.Marshal(projects)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for projects")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for projects"))
+		return nil, nil
 	}
 
 	err = stub.PutState("projects", b)
@@ -543,8 +561,8 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 
 	b, err = json.Marshal(personalproject)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for personalprojects")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for personalprojects"))
+		return nil, nil
 	}
 	err = stub.PutState(args[5]+"projects", b)
 	if err != nil {
@@ -557,11 +575,13 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 	projectone.Reward = args[2]
 	funds, err := strconv.Atoi(args[3])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for the projectFunds at place 3")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectFunds at place 3"))
+		return nil, nil
 	}
 	target, err := strconv.Atoi(args[4])
 	if err != nil {
-		return nil, errors.New("Expecting integer value for the projectTarget at place 4")
+		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectTarget at place 4"))
+		return nil, nil
 	}
 	projectone.Stat = false
 	projectone.Creator = (args[5])
@@ -571,14 +591,15 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 
 	b, err = json.Marshal(projectone)
 	if err != nil {
-		fmt.Println(err)
-		return nil, errors.New("Errors while creating json string for projectone")
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for userone"))
+		return nil, nil
 	}
 
 	err = stub.PutState(args[0], b)
 	if err != nil {
 		return nil, err
 	}
+	stub.PutState(args[0]+"Msg",[]byte("Project creation is succesful"))
 
 	return nil, nil
 }
@@ -627,7 +648,8 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	fmt.Println("running write()")
 
 	if len(args) != 2 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+		stub.PutState("ErrorMsg",[]byte("Incorrect number of arguments. Expecting 2. name of the key and value to set"))
+		return nil, nil
 	}
 
 	key = args[0] //rename for funsies
@@ -645,7 +667,8 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	var err error
 
 	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+		stub.PutState("ErrorMsg",[]byte("Incorrect number of arguments. Expecting name of the key to query"))
+		return nil, nil
 	}
 
 	key = args[0]
