@@ -170,7 +170,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, nil
 	}
 
-	err = stub.PutState(args[0]+"Msg",[]byte("Most recent deployment is succesful"))
+	err = stub.PutState("DeployMsg",[]byte("Most recent deployment is succesful"))
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +230,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 		// Exit function if the 3rd value integer is negative
 	if X <= 0 {
-		stub.PutState(args[0]+"Msg",[]byte("Expecting a positive number, please first put in the transaction amount and then double click the receiver"))
+		stub.PutState(args[0]+"Msg",[]byte("Expecting a positive number for the third argument"))
 		return nil, nil
 	}
 
@@ -326,7 +326,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	}
 	// Exit function if the 3rd value integer is negative
 	if X <= 0 {
-		stub.PutState(args[1]+"Msg",[]byte("Expecting a positive number, please first put in the investment amount and then double click the project"))
+		stub.PutState(args[1]+"Msg",[]byte("Expecting a positive number"))
 		return nil, nil
 	}
 
@@ -456,6 +456,7 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 }
 
 func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var personalprojectArray []string
 
 	if len(args) != 3 {
 		stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 3. Name,password,balance to create user"))
@@ -511,6 +512,19 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	}
 	stub.PutState(args[0]+"Msg",[]byte("Wallet creation is succesful"))
 
+	personalprojectArray = append(personalprojectArray, "")
+
+	b, err = json.Marshal(personalprojectArray)
+	if err != nil {
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for personalprojectArray"))
+		return nil, nil
+	}
+	personalprojects := args[0]+"projects"
+
+	err = stub.PutState(personalprojects, b)
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
