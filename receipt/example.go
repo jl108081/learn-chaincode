@@ -430,7 +430,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 
 	if len(args) != 3 {
-		stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 3. Name of the investor, the amount and the password"))
+		stub.PutState(args[0]+"Msg",[]byte("[Please put in the secret or amount"))
 		return nil, nil
 	} // password is the sha256 hash of mendix
 	if args[2] == "1274d60ff458da72bf3e58107cc2ebcf1f542b587b94c358eb65265f85c72cf5"{
