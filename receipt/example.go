@@ -171,16 +171,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, nil
 	}
 
-	err = stub.PutState("DeployMsg",[]byte("Most recent deployment is succesful"))
-	if err != nil {
-		return nil, err
-	}
-
 	err = stub.PutState("projects", b)
 	if err != nil {
 		return nil, err
 	}
-	personalprojectArray2 = append(personalprojectArray2, "")
 
 	b, err = json.Marshal(personalprojectArray2)
 	if err != nil {
@@ -194,6 +188,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, err
 	}
 
+	err = stub.PutState("DeployMsg",[]byte("Most recent deployment is successful"))
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -201,7 +199,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 
 	var X int // Transaction value
 	var err error
-
+	// input validation
 	if len(args) != 3 {
 		err = stub.PutState(args[0]+"Msg",[]byte("Incorrect number of arguments. Expecting 3"))
 		if err != nil {
@@ -209,7 +207,14 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 		}
 		return nil, nil
 	}
-
+	// checking double name
+	if args[0] == args[1] {
+		err = stub.PutState(args[0]+"Msg",[]byte("Sending money to yourself is a waste"))
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
 	// Get the state from the ledger
 	Avalbytes, err := stub.GetState(args[0])
 	if err != nil {
@@ -283,7 +288,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	if err != nil {
 		return nil, err
 	}
-	stub.PutState(args[0]+"Msg",[]byte("succesfully completed the transaction"))
+	stub.PutState(args[0]+"Msg",[]byte("successfully completed the transaction"))
 
 
 	return nil, nil
@@ -418,7 +423,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-	stub.PutState(args[1]+"Msg",[]byte("Investment into project is succesful"))
+	stub.PutState(args[1]+"Msg",[]byte("Investment into project is successful"))
 	return nil, nil
 }
 
@@ -465,8 +470,9 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 		}
 	} else {
 		stub.PutState(args[0]+"Msg",[]byte("the password is incorrect: tips: 'mendix' 'bitcoin secure'"))
+		return nil, nil
 	}
-	stub.PutState(args[0]+"Msg",[]byte("your account is succesfully funded"))
+	stub.PutState(args[0]+"Msg",[]byte("your account is successfully funded"))
 	return nil, nil
 }
 
@@ -525,7 +531,7 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	if err != nil {
 		return nil, err
 	}
-	stub.PutState(args[0]+"Msg",[]byte("Wallet creation is succesful"))
+	stub.PutState(args[0]+"Msg",[]byte("Wallet creation is successful"))
 
 	personalprojectArray = append(personalprojectArray, "")
 
@@ -629,7 +635,7 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-	stub.PutState(args[0]+"Msg",[]byte("Project creation is succesful"))
+	stub.PutState(args[0]+"Msg",[]byte("Project creation is successful"))
 
 	return nil, nil
 }
