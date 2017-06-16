@@ -384,7 +384,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		projectX.Funds = projectX.Funds - X
 		creatorX.Balance = creatorX.Balance + X
 		projectX.Stat = true
-		projectX.Description = "The project has been succesfully funded. The funds have been transferred to the Creator of the project. Please dont invest into this project anymore"
+		projectX.Description = "VGhlIHByb2plY3QgaGFzIGJlZW4gc3VjY2VzZnVsbHkgZnVuZGVkLiBUaGUgZnVuZHMgaGF2ZSBiZWVuIHRyYW5zZmVycmVkIHRvIHRoZSBDcmVhdG9yIG9mIHRoZSBwcm9qZWN0LiBQbGVhc2UgZG9udCBpbnZlc3QgaW50byB0aGlzIHByb2plY3QgYW55bW9yZQ=="
 		// write everything back to the ledger
 		b, err = json.Marshal(creatorX)
 		if err != nil {
