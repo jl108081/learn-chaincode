@@ -59,6 +59,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	var usersArray []string
 	var projectsArray []string
 	var personalprojectArray []string
+	var personalprojectArray2 []string
 
 	var userone User
 	userone.Name = args[0]
@@ -179,6 +180,20 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if err != nil {
 		return nil, err
 	}
+	personalprojectArray2 = append(personalprojectArray2, "")
+
+	b, err = json.Marshal(personalprojectArray2)
+	if err != nil {
+		stub.PutState(args[3]+"Msg",[]byte("Errors while creating json string for personalprojectArray"))
+		return nil, nil
+	}
+	personalprojects = args[3]+"projects"
+
+	err = stub.PutState(personalprojects, b)
+	if err != nil {
+		return nil, err
+	}
+
 	return nil, nil
 }
 
