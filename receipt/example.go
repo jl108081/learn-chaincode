@@ -533,13 +533,12 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	}
 	stub.PutState(args[0]+"Msg",[]byte("Wallet creation is successful"))
 
-	personalprojectArray = append(personalprojectArray, "")
-
 	b, err = json.Marshal(personalprojectArray)
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json string for personalprojectArray"))
 		return nil, nil
 	}
+	
 	personalprojects := args[0]+"projects"
 
 	err = stub.PutState(personalprojects, b)
