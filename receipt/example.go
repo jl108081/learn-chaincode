@@ -74,11 +74,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	b, err := json.Marshal(userone)
 	if err != nil {
-		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json 
-						   
-						   
-						   
-						   ing for userone"))
+		stub.PutState(args[0]+"Msg",[]byte("Errors while creating json for userone"))
 		return nil, nil
 	}
 
@@ -345,7 +341,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		return nil, nil
 	}
 
-	X, err = Atoi.ParseFloat(args[2])
+	X, err = strconv.Atoi(args[2])
 	if err != nil {
 		stub.PutState(args[1]+"Msg",[]byte("Third argument must be a integer"))
 		return nil, nil
