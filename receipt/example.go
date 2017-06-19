@@ -64,7 +64,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	var userone User
 	userone.Name = args[0]
 	userone.Password = args[1]
-	balance, err := strconv.ParseFloat(args[2])
+	balance, err := strconv.Atoi(args[2])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
 		return nil, nil
@@ -89,7 +89,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 	userone.Name = args[3]
 	userone.Password = args[4]
-	balance, err = strconv.ParseFloat(args[5])
+	balance, err = strconv.Atoi(args[5])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
 		return nil, nil
@@ -127,12 +127,12 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	projectone.Name = args[6]
 	projectone.Description = args[7]
 	projectone.Reward = args[8]
-	funds, err := strconv.ParseFloat(args[9])
+	funds, err := strconv.Atoi(args[9])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectFunds at place 9"))
 		return nil, nil
 	}
-	target, err := strconv.ParseFloat(args[10])
+	target, err := strconv.Atoi(args[10])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectTarget at place 10"))
 		return nil, nil
@@ -246,7 +246,7 @@ func (t *SimpleChaincode) Transaction(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	// Perform the execution
-	X, err = strconv.ParseFloat(args[2])
+	X, err = strconv.Atoi(args[2])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Third argument must be integer"))
 
@@ -345,7 +345,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 		return nil, nil
 	}
 
-	X, err = strconv.ParseFloat(args[2])
+	X, err = Atoi.ParseFloat(args[2])
 	if err != nil {
 		stub.PutState(args[1]+"Msg",[]byte("Third argument must be a integer"))
 		return nil, nil
@@ -458,7 +458,7 @@ func (t *SimpleChaincode) RechargeBalance(stub shim.ChaincodeStubInterface, args
 			return nil, nil
 		}
 		// perform the execution
-		X, err = strconv.ParseFloat(args[1])
+		X, err = strconv.Atoi(args[1])
 		if err !=  nil {
 			stub.PutState(args[0]+"Msg",[]byte("second argument must be a integer"))
 			return nil, nil
@@ -521,7 +521,7 @@ func (t *SimpleChaincode) CreateUser(stub shim.ChaincodeStubInterface, args []st
 	var userone User
 	userone.Name = args[0]
 	userone.Password = args[1]
-	balance, err := strconv.ParseFloat(args[2])
+	balance, err := strconv.Atoi(args[2])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for asset holding at 3 place"))
 		return nil, nil
@@ -616,12 +616,12 @@ func (t *SimpleChaincode) CreateProject(stub shim.ChaincodeStubInterface, args [
 	projectone.Name = args[0]
 	projectone.Description = args[1]
 	projectone.Reward = args[2]
-	funds, err := strconv.ParseFloat(args[3])
+	funds, err := strconv.Atoi(args[3])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectFunds at place 3"))
 		return nil, nil
 	}
-	target, err := strconv.ParseFloat(args[4])
+	target, err := strconv.Atoi(args[4])
 	if err != nil {
 		stub.PutState(args[0]+"Msg",[]byte("Expecting integer value for the projectTarget at place 4"))
 		return nil, nil
