@@ -299,7 +299,7 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	var X int // investment value
 
 	if len(args) != 3 {
-		err = stub.PutState(args[0]+"Msg",[]byte("Please fill in all the empty fields."))
+		err = stub.PutState(args[1]+"Msg",[]byte("Please fill in all the empty fields."))
 		if err != nil {
 			return nil, err
 		}
@@ -424,9 +424,9 @@ func (t *SimpleChaincode) InvestProject(stub shim.ChaincodeStubInterface, args [
 	if err != nil {
 		return nil, err
 	}
-
-	stub.PutState(args[1]+"Msg",[]byte("Investment into project is successful"))
 	}
+	stub.PutState(args[1]+"Msg",[]byte("Investment into project is successful"))
+	
 	return nil, nil
 }
 
